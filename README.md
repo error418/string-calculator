@@ -1,17 +1,25 @@
 # string-calculator
 A simple string calculator supporting variables for Java.
 
+```java
+HashMap<String, Number> variables = new HashMap<String, Number>();
+
+// notice no prepended "$" character
+variables.put("testA", 10D);
+variables.put("testB", 5D);
+
+
+Calculator calculator = new Calculator();
+Number calculationResult = calculator.calculate("$testa * $testb", variables);
+```
+
 Calculation is done by utilizing the JavaScript capabilities of Java.
 
-## Usage
+## Calculation Strings
 
-Start by creating a `Calculator` instance and you are ready to go.
-For example:
+Variables in calculation strings need to be prefixed with the `$` character.
 
-		HashMap<String, Number> variables = new HashMap<String, Number>();
-		
-		variables.put("testa", 10D);
-		variables.put("testb", 5D);
-		
-		Number calculationResult = uut.calculate("$testa * $testb", variables);
 
+### Compiling Calculation Strings
+
+If you need to run calculation strings multiple times you should consider precompiling the calculation string.

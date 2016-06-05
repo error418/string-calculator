@@ -5,13 +5,10 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.HashMap;
 
-import javax.script.CompiledScript;
-
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.github.error418.calculator.Calculator;
 import com.github.error418.calculator.exception.CalculationException;
 import com.github.error418.calculator.exception.InvalidCalculationException;
 
@@ -78,7 +75,7 @@ public class CalculationTest {
 	
 	@Test
 	public void testSimpleCompiledScript() throws Exception {
-		CompiledScript script = uut.compile("10 + 20");
+		CompiledCalculation script = uut.compile("10 + 20");
 		Number result = uut.calculate(script, new HashMap<String, Number>());
 		
 		Assert.assertEquals(30, result);
@@ -86,13 +83,13 @@ public class CalculationTest {
 	
 	@Test
 	public void testVariableCompiledScript() throws Exception {
-		CompiledScript script = uut.compile("$longVarName + 20 + $a");
+		CompiledCalculation calculation = uut.compile("$longVarName + 20 + $a");
 		
 		HashMap<String, Number> vars = new HashMap<String, Number>();
-		vars.put("$a", 20);
-		vars.put("$longVarName", 10);
+		vars.put("a", 20);
+		vars.put("longVarName", 10);
 		
-		Number result = uut.calculate(script, vars);
+		Number result = uut.calculate(calculation, vars);
 		
 		Assert.assertEquals(50, result);
 	}

@@ -6,7 +6,6 @@ import java.util.regex.Pattern;
 
 import javax.script.Bindings;
 import javax.script.Compilable;
-import javax.script.CompiledScript;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
@@ -19,9 +18,19 @@ import com.github.error418.calculator.exception.CalculationException;
 import com.github.error418.calculator.exception.InvalidCalculationException;
 
 /**
- * Provides functionality to evaluate calculation strings.
+ * Evaluates string calculations.
  * 
- * @author error418
+ * A calculation string can also contain variables, which need to be prefixed with a {@value #SCRIPT_VARIABLE_PREFIX} character.
+ * <br />
+ * 
+ * Calculation String examples:
+ * <ul>
+ *  <li>1 + 2 + 3</li>
+ * 	<li>10 + 20 + $variable</li>
+ *  <li>$variableA + $variableB</li>
+ * </ul>
+ * 
+ * @author Michael Gerbig
  *
  */
 public class Calculator {
@@ -66,7 +75,7 @@ public class Calculator {
 	 * @return compiled script
 	 * @throws CalculationException if calculation script failed to compile
 	 */
-	public final CompiledScript compile(String calculation) throws CalculationException {
+	public final CompiledCalculation compile(String calculation) throws CalculationException {
 		if (!isValid(calculation)) {
 			throw new InvalidCalculationException("the calculation string is invalid '" + calculation + "'");
 		}
@@ -75,7 +84,7 @@ public class Calculator {
 			Compilable compiler = (Compilable)engine;
 			
 			try {
-				return compiler.compile(calculation);
+				return new CompiledCalculation(compiler.compile(calculation));
 			} catch (ScriptException e) {
 				throw new InvalidCalculationException("the calculation string is invalid '" + calculation + "'", e);
 			}
@@ -87,19 +96,16 @@ public class Calculator {
 	/**
 	 * Execute a previously compiled script with the given variables.
 	 * 
-	 * @param calculation compiled calculation script
+	 * @param compiled compiled calculation script
 	 * @param variables variables passed to the script
 	 * @return calculation result
 	 * @throws CalculationException if script execution failed
 	 */
-	public final Number calculate(CompiledScript calculation, HashMap<String, Number> variables) throws CalculationException {
-		Bindings bindings = new SimpleBindings();
-		for(String key : variables.keySet()) {
-			bindings.put(key, variables.get(key));
-		}
+	public final Number calculate(CompiledCalculation compiled, HashMap<String, Number> variables) throws CalculationException {
+		Bindings bindings = toBindings(variables);
 
 		try {
-	    	return ((Number)calculation.eval(bindings));
+	    	return ((Number)compiled.getCompiledScript().eval(bindings));
 	    }
 	    catch (ScriptException e) {
 	    	throw new CalculationException("an exception was thrown while processing calculation", e);
@@ -141,6 +147,14 @@ public class Calculator {
 		return this.calculate(calculation, new HashMap<String, Number>());
 	}
 	
+	/**
+	 * Builds a {@link Bindings} instance from a passed {@link Map}.
+	 * 
+	 * This method checks the {@link Map}s key values to comply to the RegEx Pattern {@value #VAR_PATTERN}. If the key does not comply it will be ignored.
+	 * 
+	 * @param map variables
+	 * @return Bindings instance containing the variables
+	 */
 	private Bindings toBindings(Map<String, Number> map) {
 		Bindings bindings = new SimpleBindings();
 		
@@ -148,7 +162,7 @@ public class Calculator {
 			if(variablePattern.matcher(key).matches()) {
 				bindings.put(SCRIPT_VARIABLE_PREFIX + key, map.get(key));
 			} else {
-				LOGGER.warn("variable name '{}' is not valid and will not be processed.", key);
+				LOGGER.warn("variable name '{}' is not valid and will not be processed. Please comply to RegEx Pattern {}", key, VAR_PATTERN);
 			}
 		}
 		
