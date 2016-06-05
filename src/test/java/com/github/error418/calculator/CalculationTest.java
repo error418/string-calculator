@@ -5,23 +5,26 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.HashMap;
 
+import javax.script.CompiledScript;
+
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.github.error418.calculator.CalculationService;
+import com.github.error418.calculator.Calculator;
 import com.github.error418.calculator.exception.CalculationException;
 import com.github.error418.calculator.exception.InvalidCalculationException;
 
 public class CalculationTest {
 
-	private CalculationService uut;
+	private Calculator uut;
 	
 	private String[] invalidCalculations;
 	private String[] validCalculations;
 	
 	@Before
 	public void init() {
-		uut = new CalculationService();
+		uut = new Calculator();
 		
 		invalidCalculations = new String[] {
 			"3 + 2 * 9 // 2",
@@ -45,12 +48,12 @@ public class CalculationTest {
 	
 	@Test
 	public void testVariables() throws CalculationException {
-		HashMap<String, Double> variables = new HashMap<String, Double>();
+		HashMap<String, Number> variables = new HashMap<String, Number>();
 		
 		variables.put("testa", 10D);
 		variables.put("testb", 5D);
 		
-		Double calculationResult = uut.calculate("$testa * $testb", variables);
+		Number calculationResult = uut.calculate("$testa * $testb", variables);
 	
 		assertTrue("needs to calculate properly", calculationResult.equals(50D));
 	}
@@ -71,5 +74,26 @@ public class CalculationTest {
 	@Test(expected = InvalidCalculationException.class)
 	public void checkCalculationException() throws CalculationException {
 		uut.calculate(invalidCalculations[0]);
+	}
+	
+	@Test
+	public void testSimpleCompiledScript() throws Exception {
+		CompiledScript script = uut.compile("10 + 20");
+		Number result = uut.calculate(script, new HashMap<String, Number>());
+		
+		Assert.assertEquals(30, result);
+	}
+	
+	@Test
+	public void testVariableCompiledScript() throws Exception {
+		CompiledScript script = uut.compile("$longVarName + 20 + $a");
+		
+		HashMap<String, Number> vars = new HashMap<String, Number>();
+		vars.put("$a", 20);
+		vars.put("$longVarName", 10);
+		
+		Number result = uut.calculate(script, vars);
+		
+		Assert.assertEquals(50, result);
 	}
 }
