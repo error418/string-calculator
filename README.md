@@ -10,7 +10,7 @@ variables.put("testB", 5D);
 
 
 Calculator calculator = new Calculator();
-Number calculationResult = calculator.calculate("$testa * $testb", variables);
+Number calculationResult = calculator.calculate("$testA * $testB", variables);
 ```
 
 Calculation is done by utilizing the JavaScript capabilities of Java.
