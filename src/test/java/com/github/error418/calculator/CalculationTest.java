@@ -81,7 +81,7 @@ public class CalculationTest {
 		CompiledScript script = uut.compile("10 + 20");
 		Number result = uut.calculate(script, new HashMap<String, Number>());
 		
-		Assert.assertEquals(30, result);
+		Assert.assertEquals(30D, result.doubleValue(), 0.01);
 	}
 	
 	@Test
