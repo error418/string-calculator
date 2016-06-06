@@ -52,7 +52,7 @@ public class CalculationTest {
 		
 		Number calculationResult = uut.calculate("$testa * $testb", variables);
 	
-		assertTrue("needs to calculate properly", calculationResult.equals(50D));
+		Assert.assertEquals(50D, calculationResult.doubleValue(), 0.01);
 	}
 	
 	@Test
@@ -78,7 +78,7 @@ public class CalculationTest {
 		CompiledCalculation script = uut.compile("10 + 20");
 		Number result = uut.calculate(script, new HashMap<String, Number>());
 		
-		Assert.assertEquals(30, result);
+		Assert.assertEquals(30D, result.doubleValue(), 0.01);
 	}
 	
 	@Test
@@ -91,6 +91,6 @@ public class CalculationTest {
 		
 		Number result = uut.calculate(calculation, vars);
 		
-		Assert.assertEquals(50, result);
+		Assert.assertEquals(50D, result.doubleValue(), 0.01);
 	}
 }
