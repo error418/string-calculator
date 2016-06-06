@@ -26,6 +26,7 @@ Variables in calculation strings need to be prefixed with the `$` character.
 ### Compiling Calculation Strings
 
 If you need to run calculation strings multiple times you should consider precompiling the calculation string.
+
 ## JDK Versions
 
 Supported (and tested) JDK versions are
