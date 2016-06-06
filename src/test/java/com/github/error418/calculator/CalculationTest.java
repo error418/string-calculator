@@ -55,7 +55,7 @@ public class CalculationTest {
 		
 		Number calculationResult = uut.calculate("$testa * $testb", variables);
 	
-		assertTrue("needs to calculate properly", calculationResult.equals(50D));
+		Assert.assertEquals(50D, calculationResult.doubleValue(), 0.01);
 	}
 	
 	@Test
@@ -94,6 +94,6 @@ public class CalculationTest {
 		
 		Number result = uut.calculate(script, vars);
 		
-		Assert.assertEquals(50, result);
+		Assert.assertEquals(50D, result.doubleValue(), 0.01);
 	}
 }
