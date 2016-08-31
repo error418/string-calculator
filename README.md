@@ -11,12 +11,14 @@ Calculation is done by utilizing the JavaScript capabilities of Java.
 Start by creating a `Calculator` instance and you are ready to go.
 For example:
 
-		HashMap<String, Number> variables = new HashMap<String, Number>();
-		
-		variables.put("testa", 10D);
-		variables.put("testb", 5D);
-		
-		Number calculationResult = uut.calculate("$testa * $testb", variables);
+```java
+HashMap<String, Number> variables = new HashMap<String, Number>();
+
+variables.put("testa", 10D);
+variables.put("testb", 5D);
+
+Number calculationResult = uut.calculate("$testa * $testb", variables);
+```
 
 ## JDK Versions
 
